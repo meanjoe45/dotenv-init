@@ -15,7 +15,7 @@ npm install -g dotenv-init
 
 This package accepts a list of files which are parsed for the usage of any environment variables. The environment variables are searched for with a basic set of guidelines. First, the string `process.env.` must follow a `=` or `:` to indicate its value is being used. Second, if the `process.env.ENV_VAR` is followed by `||`, the or'ed value is used as the default value in the `.env` files.
 
-When processing the files, if an environment variable is not assigned a default value, it is assumed to be required. Any environment variables that a required will still be output to the `.env` file with an empty value (`# NODE_ENV=`). If the `--safe` option is used, the required environment variables are also output to the `.env.example` file for use by [dotenv-safe][dotenv-safe].
+When processing the files, if an environment variable is not assigned a default value, it is assumed to be required. Any environment variables that are required will still be output to the `.env` file with an empty value (`# NODE_ENV=`). If the `--safe` option is used, the required environment variables are also output to the `.env.example` file for use by [dotenv-safe][dotenv-safe].
 
 After parsing all the files, the list of environment variables are sorted into alphabetical order.
 
@@ -30,8 +30,8 @@ dotenv-init $(find . -type f -not -path "*/node_modules*" -not -path "*/test*" -
 ### Assigned with `=`
 
 ```javascript
-const environment = process.env.NODE_ENV || 'development';
-const tokenSecret = process.env.TOKEN_SECRET;
+const environment = process.env.NODE_ENV || 'development'
+const tokenSecret = process.env.TOKEN_SECRET
 // .env output:
 // # NODE_ENV=development
 // # TOKEN_SECRET=
@@ -44,11 +44,11 @@ const tokenSecret = process.env.TOKEN_SECRET;
 
 ```javascript
 const dbSettings = {
-    username: process.env.DB_USER,
-    password: process.env.DB_PWRD,
-    dialect: process.env.DB_DIALECT || 'mysql'
-};
-// outputs: 
+  username: process.env.DB_USER,
+  password: process.env.DB_PWRD,
+  dialect: process.env.DB_DIALECT || 'mysql'
+}
+// outputs:
 // # DB_DIALECT=mysql
 // # DB_PWRD=
 // # DB_USER=

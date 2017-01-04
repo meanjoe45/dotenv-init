@@ -6,22 +6,27 @@
   "preferGlobal": true,
   "bin": "./bin/dotenv-init.js",
   "homepage": "https://github.com/meanjoe45/dotenv-init",
-  "repository" : {
-    "type" : "git",
-    "url" : "git@github.com:meanjoe45/dotenv-init.git"
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:meanjoe45/dotenv-init.git"
   },
   "bugs": {
     "url": "https://github.com/meanjoe45/dotenv-init/issues"
   },
   "scripts": {
+    "pretest": "npm run lint",
+    "lint": "standard",
+    "postlint": "npm run lint-md",
+    "lint-md": "standard-markdown"
   },
   "dependencies": {
-    "commander": "^2.0.0"
+    "commander": "^2.9.0"
   },
   "devDependencies": {
+    "standard": "^8.6.0",
+    "standard-markdown": "^2.3.0"
   },
-  "peerDependencies": {
-  },
+  "peerDependencies": {},
   "directories": {},
   "keywords": [
     "dotenv",
@@ -35,14 +40,13 @@
     "settings"
   ],
   "engines": {
-    "node" : ">=4.0.0"
+    "node": ">=4.0.0"
   },
   "author": {
-    "name" : "Joe",
+    "name": "Joe",
     "email": "meanjoe45.acct@gmail.com",
     "url": "https://meanjoe45.github.io/"
   },
-  "contributors": [
-  ],
+  "contributors": [],
   "license": "MIT"
 }
