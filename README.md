@@ -21,7 +21,7 @@ After parsing all the files, the list of environment variables are sorted into a
 
 ## Examples
 
-When installed globally, running the following command from the root directory of your project works well for sending the list of `.js` files to dotenv-init.
+When installed globally, running the following command from the root directory of the target project works well for sending the list of `.js` files to dotenv-init.
 
 ```
 dotenv-init $(find . -type f -not -path "*/node_modules*" -not -path "*/test*" -name "*.js")
@@ -102,9 +102,27 @@ This option allows the output file to be given a different name from the default
 
 This option allows the safe output file to be given a different name from the default `.env.example`.
 
+## Contributing
+
+This project is very new and does not cover all the corner cases that it should. If there is a feature you would like added or a corner case not properly covered, please open an issue on [Github][repo-issues].
+
+## Roadmap
+
+### v1.0
+- Add ability to exclude environment variables that are only part of comments in the source code
+- Add unit tests
+- Add CI
+- Add code coverage
+
+### Future
+- make current functionality a separate command (probably "parse")
+- create a new command initialize(?) for setting up initial .env
+- create a new command merge(?) that takes an existing .env file and merges in newly parsed results
+
 ## License
 
 MIT
 
+[repo-issues]: https://github.com/meanjoe45/dotenv-init/issues
 [dotenv]: https://www.npmjs.com/package/dotenv
 [dotenv-safe]: https://www.npmjs.com/package/dotenv-safe
