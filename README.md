@@ -116,8 +116,6 @@ This project is very new and does not cover all the corner cases that it should.
 ### v1.0
 - Add ability to exclude environment variables that are only part of comments in the source code
 - Add unit tests
-- Add CI
-- Add code coverage
 
 ### Future
 - make current functionality a separate command (probably "parse")
