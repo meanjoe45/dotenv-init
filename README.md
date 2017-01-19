@@ -5,10 +5,11 @@
 
 Creates an initial `.env` file by parsing a project's source code. The `.env` is intended for use with [dotenv][dotenv]. The optional `.env.example` file is intended for use with [dotenv-safe][dotenv-safe].
 
-[![BuildStatus](https://img.shields.io/travis/meanjoe45/dotenv-init/master.svg?style=flat-square)](https://travis-ci.org/meanjoe45/dotenv-init)
-[![NPM version](https://img.shields.io/npm/v/dotenv-init.svg?style=flat-square)](https://www.npmjs.com/package/dotenv-init)
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
-[![Coverage Status](https://img.shields.io/coveralls/meanjoe45/dotenv-init/master.svg?style=flat-square)](https://coveralls.io/github/meanjoe45/dotenv-init?branch=coverall-intergration)
+[![Build Status](https://img.shields.io/travis/meanjoe45/dotenv-init/master.svg?style=flat-square)](https://travis-ci.org/meanjoe45/dotenv-init)
+[![NPM Version](https://img.shields.io/npm/v/dotenv-init.svg?style=flat-square)](https://www.npmjs.com/package/dotenv-init)
+[![Dependencies Status](https://img.shields.io/david/meanjoe45/dotenv-init/master.svg?style=flat-square)](https://david-dm.org/meanjoe45/dotenv-init)
+[![JS Standard Style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/feross/standard)
+[![Coverage Status](https://img.shields.io/coveralls/meanjoe45/dotenv-init/master.svg?style=flat-square)](https://coveralls.io/github/meanjoe45/dotenv-init)
 
 ## Installation
 
