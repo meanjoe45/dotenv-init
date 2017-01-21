@@ -3,7 +3,7 @@
 
 <!-- <img src="https://raw.githubusercontent.com/motdotla/dotenv/master/dotenv.png" alt="dotenv" /> -->
 
-Creates an initial `.env` file by parsing a project's source code. The `.env` is intended for use with [dotenv][dotenv]. The optional `.env.example` file is intended for use with [dotenv-safe][dotenv-safe].
+Creates an initial `.env` file by parsing a project's source code. The `.env` is intended for use with [dotenv][dotenv] ([npm][npm-dotenv]). The optional `.env.example` file is intended for use with [dotenv-safe][dotenv-safe] ([npm][npm-dotenv-safe]).
 
 [![Build Status](https://img.shields.io/travis/meanjoe45/dotenv-init/master.svg?style=flat-square)](https://travis-ci.org/meanjoe45/dotenv-init)
 [![NPM Version](https://img.shields.io/npm/v/dotenv-init.svg?style=flat-square)](https://www.npmjs.com/package/dotenv-init)
@@ -128,5 +128,7 @@ This project is very new and does not cover all the corner cases that it should.
 MIT
 
 [repo-issues]: https://github.com/meanjoe45/dotenv-init/issues
-[dotenv]: https://www.npmjs.com/package/dotenv
-[dotenv-safe]: https://www.npmjs.com/package/dotenv-safe
+[dotenv]: https://github.com/motdotla/dotenv
+[dotenv-safe]: https://github.com/rolodato/dotenv-safe
+[npm-dotenv]: https://www.npmjs.com/package/dotenv
+[npm-dotenv-safe]: https://www.npmjs.com/package/dotenv-safe
