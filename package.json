@@ -27,6 +27,7 @@
   "devDependencies": {
     "coveralls": "^2.11.15",
     "lab": "^11.2.1",
+    "should": "^11.2.0",
     "sinon": "^1.17.7",
     "standard": "^8.6.0",
     "standard-markdown": "^2.3.0"
