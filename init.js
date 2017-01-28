@@ -172,14 +172,14 @@ function writeSafeEnvvars (envvars) {
 }
 
 function writeConsole (data) {
-  console.log(data) // eslint-disable-line no-console
+  console.log(data)
 }
 
 function writeFile (file, data) {
   fs.writeFileSync(file, data, {})
 }
 
-function init (cliArgs) { // eslint-disable-line max-statements, consistent-return
+function init (cliArgs) {
   const consoleOutput = parseOutputLevel(cliArgs.output)
   const fileOutput = parseOutputLevel(cliArgs.fileOutput)
 
@@ -229,9 +229,9 @@ function init (cliArgs) { // eslint-disable-line max-statements, consistent-retu
     writeConsole(envConsole)
   }
 
+  writeFile(cliArgs.filename, envFile)
+
   if (cliArgs.safe) {
     writeFile(cliArgs.safeFilename, envSafeFile)
   }
-
-  writeFile(cliArgs.filename, envFile)
 }
