@@ -16,10 +16,10 @@
   "scripts": {
     "pretest": "npm run lint",
     "test": "lab test/* -r lcov | coveralls",
-    "test-local": "lab test/*",
+    "test:local": "lab test/* -c",
     "lint": "standard",
-    "postlint": "npm run lint-md",
-    "lint-md": "standard-markdown"
+    "postlint": "npm run lint:md",
+    "lint:md": "standard-markdown"
   },
   "dependencies": {
     "commander": "^2.9.0"

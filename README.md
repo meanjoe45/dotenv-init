@@ -80,23 +80,23 @@ const dbSettings = {
     --safe-filename [name]  chose the name of the safe output file [.env.example]
 ```
 
-### `--help, -h`
+### `-h, --help`
 
 This option outputs the help menu as shown above.
 
-### `--version, -V`
+### `-V, --version`
 
 This option outputs the current version of dotenv-init.
 
-### `--safe, -s`
+### `-s, --safe`
 
 This option will output the `.env.example` file.
 
-### `--output [level]`
+### `-o, --output [level]`
 
 This option adjust the level of output sent to the console (silent, normal or verbose).
 
-### `--file-output [level]`
+### `-O, --file-output [level]`
 
 This option adjust the level of output sent to the files that are written (minimal, normal or verbose).
 
@@ -116,7 +116,7 @@ This project is very new and does not cover all the corner cases that it should.
 
 ### v1.0
 - Add ability to exclude environment variables that are only part of comments in the source code
-- Add unit tests
+- Add assertions to unit tests
 
 ### Future
 - make current functionality a separate command (probably "parse")

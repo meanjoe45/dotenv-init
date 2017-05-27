@@ -2,22 +2,22 @@
 'use strict'
 
 // Node Modules
-const fs = require('fs')
-const path = require('path')
+var fs = require('fs')
+var path = require('path')
 
 // Dependency Modules
 
 // Local Modules
-const pkg = require(path.resolve('package.json'))
+var pkg = require(path.resolve('package.json'))
 
 module.exports = init
 
-const OUTPUT_MINIMAL = 0
-const OUTPUT_SILENT = 0
-const OUTPUT_NORMAL = 1
-const OUTPUT_VERBOSE = 2
+var OUTPUT_MINIMAL = 0
+var OUTPUT_SILENT = 0
+var OUTPUT_NORMAL = 1
+var OUTPUT_VERBOSE = 2
 function parseOutputLevel (level) {
-  let result
+  var result
 
   switch (level) {
     case 'minimal':
@@ -41,12 +41,15 @@ function parseOutputLevel (level) {
   return result
 }
 
-function writeHeader () {
-  let header = ''
+function writeHeader (program) {
+  var header = ''
+  // $lab:coverage:off$
   if (pkg && pkg.name) {
-    header += `\n# Project: ${pkg.name}`
+    header += `\n# Project:     ${pkg.name}`
   }
-  header += `\n# Node.js: ${process.versions.node}`
+  // $lab:coverage:on$
+  header += `\n# Node.js:     v${process.versions.node}`
+  header += `\n# dotenv-init: v${program._version}`
   header += `\n# ${new Date().toLocaleString()}`
   header += '\n'
 
@@ -54,14 +57,14 @@ function writeHeader () {
 }
 
 function verifyFiles (inputFiles) {
-  const cwd = process.cwd()
-  let files = []
+  var cwd = process.cwd()
+  var files = []
 
-  for (let file of inputFiles) {
-    let absFile = path.resolve(cwd, file)
+  for (var file of inputFiles) {
+    var absFile = path.resolve(cwd, file)
 
     try {
-      let stats = fs.statSync(absFile)
+      var stats = fs.statSync(absFile)
 
       if (stats.isFile()) {
         files.push({ path: absFile, original: file, include: true })
@@ -77,10 +80,10 @@ function verifyFiles (inputFiles) {
 }
 
 function writeFileList (files) {
-  let fileList = ''
+  var fileList = ''
 
-  for (let file of files) {
-    let include = (file.include) ? '+' : '-'
+  for (var file of files) {
+    var include = (file.include) ? '+' : '-'
 
     fileList += `\n# ${include} ${file.original}`
   }
@@ -102,7 +105,7 @@ function scanFiles (files) {
     // - get the default value (number):                     [\d.]*
     //                                                       )
     //                                                   )?
-  const envRegexp = new RegExp('(?:[:=]{1}\\s*process\\.env\\.)([A-Z_]*)' +
+  var envRegexp = new RegExp('(?:[:=]{1}\\s*process\\.env\\.)([A-Z_]*)' +
                                '(?:' +
                                '(?:\\s*\\|\\|\\s*)' +
                                '(' +
@@ -112,13 +115,13 @@ function scanFiles (files) {
                                '[\\d.]*' +
                                ')' +
                                ')?', 'g')
-  let envvars = []
+  var envvars = []
 
   files.forEach(function (file) {
     if (file.include) {
-      const data = fs.readFileSync(file.path)
+      var data = fs.readFileSync(file.path, 'utf-8')
 
-      let match = envRegexp.exec(data)
+      var match = envRegexp.exec(data)
       while (match) {
         if (!envvars.some(envvar => envvar.name === match[1])) {
           envvars.push({ name: match[1], desc: null, default: match[2] })
@@ -137,7 +140,7 @@ function writeEnvvars (envvars) {
   if (envvars.length > 0) {
     envvars = envvars.sort((a, b) => a.name > b.name)
 
-    for (let envvar of envvars) {
+    for (var envvar of envvars) {
       output += `\n# ${envvar.name}=`
 
       if (envvar.default) {
@@ -157,7 +160,7 @@ function writeSafeEnvvars (envvars) {
   if (envvars.length > 0) {
     envvars = envvars.sort((a, b) => a.name > b.name)
 
-    for (let envvar of envvars) {
+    for (var envvar of envvars) {
       if (!envvar.default) {
         output += `\n# ${envvar.name}=`
       }
@@ -179,11 +182,11 @@ function writeFile (file, data) {
   fs.writeFileSync(file, data, {})
 }
 
-function init (cliArgs) {
-  const consoleOutput = parseOutputLevel(cliArgs.output)
-  const fileOutput = parseOutputLevel(cliArgs.fileOutput)
+function init (program) {
+  var consoleOutput = parseOutputLevel(program.output)
+  var fileOutput = parseOutputLevel(program.fileOutput)
 
-  if (cliArgs.filename === cliArgs.safeFilename) {
+  if (program.filename === program.safeFilename) {
     if (consoleOutput > OUTPUT_SILENT) {
       writeConsole('ERROR: OUTPUT FILES CANNOT HAVE THE SAME NAME')
     }
@@ -191,15 +194,15 @@ function init (cliArgs) {
   }
 
     // print header information
-  let envConsole = ''
-  let envFile = ''
+  var envConsole = ''
+  var envFile = ''
 
-  const header = writeHeader()
+  var header = writeHeader(program)
   envConsole += (consoleOutput >= OUTPUT_NORMAL) ? header : ''
   envFile += (fileOutput >= OUTPUT_NORMAL) ? header : ''
 
     // determine file list
-  const files = verifyFiles(cliArgs.args)
+  var files = verifyFiles(program.args)
 
   if (!files.some(file => file.include)) {
     envConsole += '\nNO FILES TO PROCESS, exiting ...'
@@ -209,29 +212,29 @@ function init (cliArgs) {
     return
   }
 
-  const fileList = writeFileList(files)
+  var fileList = writeFileList(files)
 
   envConsole += (consoleOutput >= OUTPUT_VERBOSE) ? fileList : ''
   envFile += (fileOutput >= OUTPUT_VERBOSE) ? fileList : ''
 
     // scan files for environment variables
-  const envvars = scanFiles(files)
+  var envvars = scanFiles(files)
 
-  let envSafeFile = envFile
-  const envvarList = writeEnvvars(envvars)
+  var envSafeFile = envFile
+  var envvarList = writeEnvvars(envvars)
 
   envConsole += `${envvarList}\n`
   envFile += `${envvarList}\n`
   envSafeFile += `${writeSafeEnvvars(envvars)}\n`
 
     // output results
-  if (consoleOutput > OUTPUT_SILENT) {
-    writeConsole(envConsole)
+  writeFile(program.filename, envFile)
+
+  if (program.safe) {
+    writeFile(program.safeFilename, envSafeFile)
   }
 
-  writeFile(cliArgs.filename, envFile)
-
-  if (cliArgs.safe) {
-    writeFile(cliArgs.safeFilename, envSafeFile)
+  if (consoleOutput > OUTPUT_SILENT) {
+    writeConsole(envConsole)
   }
 }
