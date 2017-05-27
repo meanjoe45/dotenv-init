@@ -15,6 +15,7 @@ program
   .version(pkg.version)
   .usage('[options] <file ...>')
   .option('-s, --safe', '.env.example is also output for use with dotenv-safe')
+  .option('-c, --comments', 'include comments when parsing for environment variables')
   .option('-o, --output [level]', 'set the console output level [normal] (silent|normal|verbose)', /^(silent|normal|verbose)$/i, 'normal')
   .option('-O, --file-output [level]', 'set the file output level [normal] (minimal|normal|verbose)', /^(minimal|normal|verbose)$/i, 'normal')
   .option('--filename [name]', 'chose the name of the output file [.env]', '.env')

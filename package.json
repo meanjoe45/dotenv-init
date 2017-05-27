@@ -22,7 +22,8 @@
     "lint:md": "standard-markdown"
   },
   "dependencies": {
-    "commander": "^2.9.0"
+    "commander": "^2.9.0",
+    "decomment": "^0.8.7"
   },
   "devDependencies": {
     "coveralls": "^2.11.15",

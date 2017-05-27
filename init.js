@@ -6,6 +6,7 @@ var fs = require('fs')
 var path = require('path')
 
 // Dependency Modules
+const decomment = require('decomment')
 
 // Local Modules
 var pkg = require(path.resolve('package.json'))
@@ -93,7 +94,7 @@ function writeFileList (files) {
 }
 
 // TODO: allow for jsdoc style defining
-function scanFiles (files) {
+function scanFiles (files, comments) {
     // Breakdown of the regular expression used to parse environment variables:
     // - get the process.env section with variable name: (?:[:=]{1}\s*process\.env\.)([A-Z0-9_]*)
     //                                                   (?:
@@ -120,6 +121,9 @@ function scanFiles (files) {
   files.forEach(function (file) {
     if (file.include) {
       var data = fs.readFileSync(file.path, 'utf-8')
+      if (!comments) {
+        data = decomment(data)
+      }
 
       var match = envRegexp.exec(data)
       while (match) {
@@ -218,7 +222,7 @@ function init (program) {
   envFile += (fileOutput >= OUTPUT_VERBOSE) ? fileList : ''
 
     // scan files for environment variables
-  var envvars = scanFiles(files)
+  var envvars = scanFiles(files, program.comments)
 
   var envSafeFile = envFile
   var envvarList = writeEnvvars(envvars)

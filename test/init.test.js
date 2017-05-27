@@ -76,6 +76,7 @@ describe('dotenv-init', function () {
         output: 'normal',
         fileOutput: 'normal',
         safe: false,
+        comments: false,
         filename: '.env',
         safeFilename: '.env.example',
         args: ['file1.js', 'file2.js']
@@ -153,6 +154,18 @@ describe('dotenv-init', function () {
 
       init(defaultArgs)
       writeFileSync.callCount.should.eql(2)
+
+      done()
+    })
+
+    it('takes option for allowing comments', function (done) {
+      // TODO: create assertions to test validity
+      statSync.returns(fileStats)
+      readFileSync.returns('empty file')
+
+      defaultArgs.comments = true
+
+      init(defaultArgs)
 
       done()
     })

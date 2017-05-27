@@ -71,13 +71,14 @@ const dbSettings = {
 
   Options:
 
-    -h, --help              output usage information
-    -V, --version           output the version number
-    -s, --safe              .env.example is also output for use with dotenv-safe
-    --output [level]        set the output level for the console [normal]
-    --file-output [level]   set the output level for the .env files [normal]
-    --filename [name]       chose the name of the output file [.env]
-    --safe-filename [name]  chose the name of the safe output file [.env.example]
+    -h, --help                output usage information
+    -V, --version             output the version number
+    -s, --safe                .env.example is also output for use with dotenv-safe
+    -c, --comments            include comments when parsing for environment variables
+    -o, --output [level]      set the output level for the console [normal]
+    -O, --file-output [level] set the output level for the .env files [normal]
+    --filename [name]         chose the name of the output file [.env]
+    --safe-filename [name]    chose the name of the safe output file [.env.example]
 ```
 
 ### `-h, --help`
@@ -91,6 +92,10 @@ This option outputs the current version of dotenv-init.
 ### `-s, --safe`
 
 This option will output the `.env.example` file.
+
+### `-c, --comments`
+
+This option will include environment variables in comments when parsing
 
 ### `-o, --output [level]`
 
@@ -115,7 +120,6 @@ This project is very new and does not cover all the corner cases that it should.
 ## Roadmap
 
 ### v1.0
-- Add ability to exclude environment variables that are only part of comments in the source code
 - Add assertions to unit tests
 
 ### Future
