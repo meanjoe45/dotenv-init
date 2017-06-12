@@ -6,7 +6,7 @@ var fs = require('fs')
 var path = require('path')
 
 // Dependency Modules
-const decomment = require('decomment')
+var decomment = require('decomment')
 
 // Local Modules
 var pkg = require(path.resolve('package.json'))
@@ -190,7 +190,7 @@ function init (program) {
   var consoleOutput = parseOutputLevel(program.output)
   var fileOutput = parseOutputLevel(program.fileOutput)
 
-  if (program.filename === program.safeFilename) {
+  if (program.safe && (program.filename === program.safeFilename)) {
     if (consoleOutput > OUTPUT_SILENT) {
       writeConsole('ERROR: OUTPUT FILES CANNOT HAVE THE SAME NAME')
     }
