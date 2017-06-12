@@ -23,6 +23,20 @@ var afterEach = lab.afterEach
 var it = lab.test
 var s
 
+var orderedEnvvars = [
+  'NODE_ENV',
+  'TEST_BOOLEAN',
+  'TEST_NUMBER',
+  'TEST_REQUIRED',
+  'TEST_STRING1',
+  'TEST_STRING2'
+]
+
+var orderedCommentEnvvars = [
+  'COMMENTED_ENVVAR1',
+  'COMMENTED_ENVVAR2'
+]
+
 var file1 = `
 /*
  * Copyright (c) 2017 test1, All rights reserved
@@ -30,25 +44,30 @@ var file1 = `
 'use strict';
 
 require('dotenv-safe').load();
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+process.env.${orderedEnvvars[0]} = process.env.${orderedEnvvars[0]} || 'development';
 
 var testObj = {
-    testString: process.env.TEST_STRING || 'testString',
-    testNumber: process.env.TEST_NUMBER || 'testNumber',
-    testBoolean: process.env.TEST_BOOLEAN || 'testBoolean',
-    testRequired: process.env.TEST_REQUIRED
+    testString: process.env.${orderedEnvvars[4]} || 'testString1',
+    testNumber: process.env.${orderedEnvvars[2]} || 'testNumber',
+    testBoolean: process.env.${orderedEnvvars[1]} || 'testBoolean',
+    testRequired: process.env.${orderedEnvvars[3]}
 };
+
+/*
+ *  commentedEnvvar = process.env.${orderedCommentEnvvars[0]};
+ */
 `
+
 var file2 = `
 //
 // Copyright (c) 2017 test2, All rights reserved
 //
-var testString = process.env.TEST_STRING || 'testString';
-var testNumber = process.env.TEST_NUMBER || 100;
-var testBoolean = process.env.TEST_BOOLEAN || true;
-var testRequired = process.env.TEST_REQUIRED;
+var testString = process.env.${orderedEnvvars[5]} || 'testString2';
+var testNumber = process.env.${orderedEnvvars[2]} || 100;
+var testBoolean = process.env.${orderedEnvvars[1]} || true;
+var testRequired = process.env.${orderedEnvvars[3]};
 
-// commentedEnvvar = process.env.COMMENTED_ENVVAR;
+// commentedEnvvar = process.env.${orderedCommentEnvvars[1]};
 `
 
 describe('dotenv-init', function () {
@@ -107,41 +126,49 @@ describe('dotenv-init', function () {
     })
 
     it('takes option for console output', function (done) {
-      // TODO: create assertions to test validity
       statSync.returns(fileStats)
       readFileSync.returns(file1)
 
       defaultArgs.output = 'silent'
-
       init(defaultArgs)
-      consoleLog.callCount.should.eql(0)
+      consoleLog.should.be.notCalled
 
       consoleLog.reset()
       defaultArgs.output = 'normal'
       init(defaultArgs)
+      consoleLog.callCount.should.be.aboveOrEqual(1)
+      var normalLength = consoleLog.args[0][0].length
 
       consoleLog.reset()
       defaultArgs.output = 'verbose'
       init(defaultArgs)
+      consoleLog.callCount.should.be.aboveOrEqual(1)
+      consoleLog.args[0][0].length.should.be.above(normalLength)
 
       done()
     })
 
     it('takes option for file output', function (done) {
-      // TODO: create assertions to test validity
       statSync.returns(fileStats)
-      readFileSync.returns('empty file')
+      readFileSync.returns(file1)
 
       defaultArgs.fileOutput = 'minimal'
       init(defaultArgs)
+      var minimalLength = writeFileSync.args[0][1].length
+      minimalLength.should.be.above(0)
 
+      writeFileSync.reset()
       defaultArgs.fileOutput = 'normal'
-      statSync.returns(dirStats)
+      statSync.returns(fileStats)
       init(defaultArgs)
+      var normalLength = writeFileSync.args[0][1].length
+      normalLength.should.be.above(minimalLength)
 
+      writeFileSync.reset()
       defaultArgs.fileOutput = 'verbose'
       statSync.returns(fileStats)
       init(defaultArgs)
+      writeFileSync.args[0][1].length.should.be.above(normalLength)
 
       done()
     })
@@ -159,13 +186,19 @@ describe('dotenv-init', function () {
     })
 
     it('takes option for allowing comments', function (done) {
-      // TODO: create assertions to test validity
       statSync.returns(fileStats)
-      readFileSync.returns('empty file')
+      readFileSync.withArgs(sinon.match('file1.js'), sinon.match.string).returns(file1)
+      readFileSync.withArgs(sinon.match('file2.js'), sinon.match.string).returns(file2)
 
       defaultArgs.comments = true
 
-      init(defaultArgs)
+      var envvars = init(defaultArgs)
+
+      var orderedNames = orderedEnvvars
+        .concat(orderedCommentEnvvars)
+        .sort()
+        .map((envvar) => { return { name: envvar } })
+      envvars.should.containDeepOrdered(orderedNames)
 
       done()
     })
@@ -209,27 +242,35 @@ describe('dotenv-init', function () {
     })
 
     it('should not allow options for filename and safeFilename be the same', function (done) {
-      // TODO: create assertions to test validity
-      statSync.returns(fileStats)
-      readFileSync.returns('empty file')
-
       defaultArgs.safe = true
       defaultArgs.output = 'silent'
       defaultArgs.filename = '.test'
       defaultArgs.safeFilename = '.test'
-
       init(defaultArgs)
-      consoleLog.reset()
+      consoleLog.should.be.notCalled
+      statSync.should.be.notCalled
 
       defaultArgs.output = 'normal'
       init(defaultArgs)
-      consoleLog.restore()
+      consoleLog.should.be.calledOnce
+      statSync.should.be.notCalled
+
+      done()
+    })
+
+    it('should disregard safeFilename option if safe option is false', function (done) {
+      statSync.returns(fileStats)
+      readFileSync.returns('empty file')
+
+      defaultArgs.filename = '.test'
+      defaultArgs.safeFilename = '.test'
+      init(defaultArgs)
+      statSync.should.be.called
 
       done()
     })
 
     it('should exclude file list items that are directories', function (done) {
-      // TODO: create assertions to test validity
       statSync.onFirstCall().returns(fileStats)
               .onSecondCall().returns(dirStats)
       readFileSync.returns(file1)
@@ -237,22 +278,37 @@ describe('dotenv-init', function () {
       init(defaultArgs)
       statSync.args[0][0].should.containEql(defaultArgs.args[0])
       statSync.args[1][0].should.containEql(defaultArgs.args[1])
-      readFileSync.callCount.should.eql(1)
+      readFileSync.callCount.should.equal(1)
 
       done()
     })
 
     it('should exclude file list items that do not exist', function (done) {
-      // TODO: create assertions to test validity
       statSync.onFirstCall().throws()
               .onSecondCall().returns(fileStats)
       readFileSync.returns(file1)
 
+      init(defaultArgs).should.not.throw()
+      statSync.should.be.calledTwice
+      statSync.args[0][0].should.containEql(defaultArgs.args[0])
+      statSync.args[1][0].should.containEql(defaultArgs.args[1])
+      readFileSync.callCount.should.equal(1)
+
+      done()
+    })
+
+    it('should exit without writing files if file list is empty', function (done) {
+      defaultArgs.args = []
+
       init(defaultArgs)
-      // (() => init(defaultArgs)).should.throw()
-      // statSync.args[0][0].should.containEql(defaultArgs.args[0])
-      // statSync.args[1][0].should.containEql(defaultArgs.args[1])
-      // readFileSync.callCount.should.eql(1)
+      readFileSync.should.be.notCalled
+      writeFileSync.should.be.notCalled
+
+      defaultArgs.output = 'silent'
+      init(defaultArgs)
+      consoleLog.should.be.notCalled
+      readFileSync.should.be.notCalled
+      writeFileSync.should.be.notCalled
 
       done()
     })
@@ -262,10 +318,15 @@ describe('dotenv-init', function () {
       readFileSync.withArgs(sinon.match('file1.js'), sinon.match.string).returns(file1)
       readFileSync.withArgs(sinon.match('file2.js'), sinon.match.string).returns(file2)
 
-      init(defaultArgs)
+      var envvars = init(defaultArgs)
       statSync.args[0][0].should.containEql(defaultArgs.args[0])
       statSync.args[1][0].should.containEql(defaultArgs.args[1])
-      // TODO: test for the individual environment variables in the console/file output
+
+      var orderedNames = orderedEnvvars.map((envvar) => { return { name: envvar } })
+      envvars.should.containDeepOrdered(orderedNames)
+
+      var orderedCommentNames = orderedCommentEnvvars.map((envvar) => { return { name: envvar } })
+      envvars.should.not.containDeepOrdered(orderedCommentNames)
 
       done()
     })
