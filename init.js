@@ -241,4 +241,6 @@ function init (program) {
   if (consoleOutput > OUTPUT_SILENT) {
     writeConsole(envConsole)
   }
+
+  return envvars
 }
