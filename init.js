@@ -100,13 +100,13 @@ function scanFiles (files, comments) {
     //                                                   (?:
     // - get the optional '||' OR operator for defaults:   (?:\s*\|\|\s*)
     //                                                       (
-    // - get the default value ("string"):                   (?:["])[^\n\r"]*(?:["])
-    // - get the default value ('string'):                   (?:['])[^\n\r\']*(?:['])
-    // - get the default value (boolean):                    [Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee]
+    // - get the default value ("string"):                   (?:["])[^\n\r"]*(?:["]) |
+    // - get the default value ('string'):                   (?:['])[^\n\r']*(?:[']) |
+    // - get the default value (boolean):                    [Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee] |
     // - get the default value (number):                     [\d.]*
     //                                                       )
     //                                                   )?
-  var envRegexp = new RegExp('(?:[:=]{1}\\s*process\\.env\\.)([A-Z_]*)' +
+  var envRegexp = new RegExp('(?:[:=]{1}\\s*process\\.env\\.)([A-Z0-9_]*)' +
                                '(?:' +
                                '(?:\\s*\\|\\|\\s*)' +
                                '(' +
