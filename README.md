@@ -71,14 +71,14 @@ const dbSettings = {
 
   Options:
 
-    -h, --help                output usage information
-    -V, --version             output the version number
-    -s, --safe                .env.example is also output for use with dotenv-safe
-    -c, --comments            include comments when parsing for environment variables
-    -o, --output [level]      set the output level for the console [normal]
-    -O, --file-output [level] set the output level for the .env files [normal]
-    --filename [name]         chose the name of the output file [.env]
-    --safe-filename [name]    chose the name of the safe output file [.env.example]
+    -h, --help                 output usage information
+    -V, --version              output the version number
+    -s, --safe                 .env.example is also output for use with dotenv-safe
+    -c, --comments             include comments when parsing for environment variables
+    -o, --output [level]       set the console output level [normal] (silent|normal|verbose)
+    -O, --file-output [level]  set the file output level [normal] (minimal|normal|verbose)
+    --filename [name]          chose the name of the output file [.env]
+    --safe-filename [name]     chose the name of the safe output file [.env.example]
 ```
 
 ### `-h, --help`
@@ -119,8 +119,8 @@ This project is very new and does not cover all the corner cases that it should.
 
 ## Roadmap
 
-### v1.0
-- Add assertions to unit tests
+### v1.1.0
+- Add the use of `globs` to specify files to search
 
 ### Future
 - make current functionality a separate command (probably "parse")
