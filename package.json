@@ -29,6 +29,7 @@
     "coveralls": "^2.13.1",
     "lab": "^13.1.0",
     "should": "^11.2.1",
+    "should-sinon": "^0.0.5",
     "sinon": "^2.3.2",
     "standard": "^10.0.2",
     "standard-markdown": "^2.3.0"

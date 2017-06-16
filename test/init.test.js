@@ -9,6 +9,7 @@ var fs = require('fs')
 // Dev Dependency modules
 require('should')
 var sinon = require('sinon')
+require('should-sinon')
 var Lab = require('lab')
 
 // System Under Test (SUT)
@@ -131,7 +132,7 @@ describe('dotenv-init', function () {
 
       defaultArgs.output = 'silent'
       init(defaultArgs)
-      consoleLog.should.be.notCalled
+      consoleLog.should.not.be.called()
 
       consoleLog.reset()
       defaultArgs.output = 'normal'
@@ -247,13 +248,13 @@ describe('dotenv-init', function () {
       defaultArgs.filename = '.test'
       defaultArgs.safeFilename = '.test'
       init(defaultArgs)
-      consoleLog.should.be.notCalled
-      statSync.should.be.notCalled
+      consoleLog.should.not.be.called()
+      statSync.should.not.be.called()
 
       defaultArgs.output = 'normal'
       init(defaultArgs)
-      consoleLog.should.be.calledOnce
-      statSync.should.be.notCalled
+      consoleLog.should.be.calledOnce()
+      statSync.should.not.be.called()
 
       done()
     })
@@ -265,7 +266,7 @@ describe('dotenv-init', function () {
       defaultArgs.filename = '.test'
       defaultArgs.safeFilename = '.test'
       init(defaultArgs)
-      statSync.should.be.called
+      statSync.should.be.called()
 
       done()
     })
@@ -289,7 +290,7 @@ describe('dotenv-init', function () {
       readFileSync.returns(file1)
 
       init(defaultArgs).should.not.throw()
-      statSync.should.be.calledTwice
+      statSync.should.be.calledTwice()
       statSync.args[0][0].should.containEql(defaultArgs.args[0])
       statSync.args[1][0].should.containEql(defaultArgs.args[1])
       readFileSync.callCount.should.equal(1)
@@ -301,14 +302,15 @@ describe('dotenv-init', function () {
       defaultArgs.args = []
 
       init(defaultArgs)
-      readFileSync.should.be.notCalled
-      writeFileSync.should.be.notCalled
+      readFileSync.should.not.be.called()
+      writeFileSync.should.not.be.called()
 
+      consoleLog.reset()
       defaultArgs.output = 'silent'
       init(defaultArgs)
-      consoleLog.should.be.notCalled
-      readFileSync.should.be.notCalled
-      writeFileSync.should.be.notCalled
+      consoleLog.should.not.be.called()
+      readFileSync.should.not.be.called()
+      writeFileSync.should.not.be.called()
 
       done()
     })
