@@ -1,6 +1,6 @@
 {
   "name": "dotenv-init",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Creates an .env file by parsing a project's source code.",
   "main": "init.js",
   "preferGlobal": true,
