@@ -22,17 +22,17 @@
     "lint:md": "standard-markdown"
   },
   "dependencies": {
-    "commander": "^2.10.0",
-    "decomment": "^0.9.0"
+    "commander": "^2.11.0",
+    "decomment": "^0.9.1"
   },
   "devDependencies": {
-    "coveralls": "^2.13.1",
-    "lab": "^14.1.0",
-    "should": "^11.2.1",
-    "should-sinon": "^0.0.5",
-    "sinon": "^2.3.5",
-    "standard": "^10.0.2",
-    "standard-markdown": "^4.0.1"
+    "coveralls": "^3.0.0",
+    "lab": "^14.3.1",
+    "should": "^13.1.0",
+    "should-sinon": "^0.0.6",
+    "sinon": "^4.0.0",
+    "standard": "^10.0.3",
+    "standard-markdown": "^4.0.2"
   },
   "peerDependencies": {},
   "directories": {},
