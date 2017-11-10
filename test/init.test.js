@@ -2,30 +2,30 @@
 'use strict'
 
 // Node modules
-var fs = require('fs')
+const fs = require('fs')
 
 // Dependency modules
-var glob = require('glob')
+const glob = require('glob')
 
 // Dev Dependency modules
 require('should')
-var sinon = require('sinon')
+const sinon = require('sinon')
 require('should-sinon')
-var Lab = require('lab')
+const Lab = require('lab')
 
 // System Under Test (SUT)
-var init = require('../init')
+const init = require('../init')
 
-var lab = exports.lab = Lab.script()
-var describe = lab.experiment
-// var before = lab.before
-// var after = lab.after
-var beforeEach = lab.beforeEach
-var afterEach = lab.afterEach
-var it = lab.test
-var s
+const lab = exports.lab = Lab.script()
+const describe = lab.experiment
+// const before = lab.before
+// const after = lab.after
+const beforeEach = lab.beforeEach
+const afterEach = lab.afterEach
+const it = lab.test
+let s
 
-var orderedEnvvars = [
+const orderedEnvvars = [
   'NODE_ENV',
   'TEST_BOOLEAN',
   'TEST_NUMBER',
@@ -34,12 +34,12 @@ var orderedEnvvars = [
   'TEST_STRING2'
 ]
 
-var orderedCommentEnvvars = [
+const orderedCommentEnvvars = [
   'COMMENTED_ENVVAR1',
   'COMMENTED_ENVVAR2'
 ]
 
-var file1 = `
+const file1 = `
 /*
  * Copyright (c) 2017 test1, All rights reserved
  */
@@ -48,7 +48,7 @@ var file1 = `
 require('dotenv-safe').load();
 process.env.${orderedEnvvars[0]} = process.env.${orderedEnvvars[0]} || 'development';
 
-var testObj = {
+const testObj = {
     testString: process.env.${orderedEnvvars[4]} || 'testString1',
     testNumber: process.env.${orderedEnvvars[2]} || 'testNumber',
     testBoolean: process.env.${orderedEnvvars[1]} || 'testBoolean',
@@ -60,14 +60,14 @@ var testObj = {
  */
 `
 
-var file2 = `
+const file2 = `
 //
 // Copyright (c) 2017 test2, All rights reserved
 //
-var testString = process.env.${orderedEnvvars[5]} || 'testString2';
-var testNumber = process.env.${orderedEnvvars[2]} || 100;
-var testBoolean = process.env.${orderedEnvvars[1]} || true;
-var testRequired = process.env.${orderedEnvvars[3]};
+const testString = process.env.${orderedEnvvars[5]} || 'testString2';
+const testNumber = process.env.${orderedEnvvars[2]} || 100;
+const testBoolean = process.env.${orderedEnvvars[1]} || true;
+const testRequired = process.env.${orderedEnvvars[3]};
 
 // commentedEnvvar = process.env.${orderedCommentEnvvars[1]};
 `
@@ -84,15 +84,15 @@ describe('dotenv-init', function () {
   })
 
   describe('#init() (parse)', function () {
-    var defaultArgs
-    var defaultGlobResult
-    var consoleLog
-    var globSync
-    var statSync
-    var fileStats
-    var dirStats
-    var readFileSync
-    var writeFileSync
+    let defaultArgs
+    let defaultGlobResult
+    let consoleLog
+    let globSync
+    let statSync
+    let fileStats
+    let dirStats
+    let readFileSync
+    let writeFileSync
 
     beforeEach(function (done) {
       defaultArgs = {
@@ -146,7 +146,7 @@ describe('dotenv-init', function () {
       defaultArgs.output = 'normal'
       init(defaultArgs)
       consoleLog.callCount.should.be.aboveOrEqual(1)
-      var normalLength = consoleLog.args[0][0].length
+      const normalLength = consoleLog.args[0][0].length
 
       consoleLog.reset()
       defaultArgs.output = 'verbose'
@@ -164,14 +164,14 @@ describe('dotenv-init', function () {
 
       defaultArgs.fileOutput = 'minimal'
       init(defaultArgs)
-      var minimalLength = writeFileSync.args[0][1].length
+      const minimalLength = writeFileSync.args[0][1].length
       minimalLength.should.be.above(0)
 
       writeFileSync.reset()
       defaultArgs.fileOutput = 'normal'
       statSync.returns(fileStats)
       init(defaultArgs)
-      var normalLength = writeFileSync.args[0][1].length
+      const normalLength = writeFileSync.args[0][1].length
       normalLength.should.be.above(minimalLength)
 
       writeFileSync.reset()
@@ -204,9 +204,9 @@ describe('dotenv-init', function () {
 
       defaultArgs.comments = true
 
-      var envvars = init(defaultArgs)
+      const envvars = init(defaultArgs)
 
-      var orderedNames = orderedEnvvars
+      const orderedNames = orderedEnvvars
         .concat(orderedCommentEnvvars)
         .sort()
         .map((envvar) => { return { name: envvar } })
@@ -382,14 +382,14 @@ describe('dotenv-init', function () {
       readFileSync.withArgs(sinon.match('file1.js'), sinon.match.string).returns(file1)
       readFileSync.withArgs(sinon.match('file2.js'), sinon.match.string).returns(file2)
 
-      var envvars = init(defaultArgs)
+      const envvars = init(defaultArgs)
       statSync.args[0][0].should.containEql(defaultGlobResult[0])
       statSync.args[1][0].should.containEql(defaultGlobResult[1])
 
-      var orderedNames = orderedEnvvars.map((envvar) => { return { name: envvar } })
+      const orderedNames = orderedEnvvars.map((envvar) => { return { name: envvar } })
       envvars.should.containDeepOrdered(orderedNames)
 
-      var orderedCommentNames = orderedCommentEnvvars.map((envvar) => { return { name: envvar } })
+      const orderedCommentNames = orderedCommentEnvvars.map((envvar) => { return { name: envvar } })
       envvars.should.not.containDeepOrdered(orderedCommentNames)
 
       done()
