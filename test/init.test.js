@@ -5,6 +5,7 @@
 var fs = require('fs')
 
 // Dependency modules
+var glob = require('glob')
 
 // Dev Dependency modules
 require('should')
@@ -84,7 +85,9 @@ describe('dotenv-init', function () {
 
   describe('#init() (parse)', function () {
     var defaultArgs
+    var defaultGlobResult
     var consoleLog
+    var globSync
     var statSync
     var fileStats
     var dirStats
@@ -97,10 +100,12 @@ describe('dotenv-init', function () {
         fileOutput: 'normal',
         safe: false,
         comments: false,
+        ignore: 'node_modules/**,test/**',
         filename: '.env',
         safeFilename: '.env.example',
-        args: ['file1.js', 'file2.js']
+        args: ['**.js']
       }
+      defaultGlobResult = ['file1.js', 'file2.js']
 
       fileStats = sinon.createStubInstance(fs.Stats)
       fileStats.isFile.returns(true)
@@ -110,6 +115,7 @@ describe('dotenv-init', function () {
       fileStats.isDirectory.returns(true)
 
       consoleLog = sinon.stub(console, 'log')
+      globSync = sinon.stub(glob, 'sync')
       statSync = sinon.stub(fs, 'statSync')
       readFileSync = sinon.stub(fs, 'readFileSync')
       writeFileSync = sinon.stub(fs, 'writeFileSync')
@@ -119,6 +125,7 @@ describe('dotenv-init', function () {
 
     afterEach(function (done) {
       consoleLog.restore()
+      globSync.restore()
       statSync.restore()
       readFileSync.restore()
       writeFileSync.restore()
@@ -127,6 +134,7 @@ describe('dotenv-init', function () {
     })
 
     it('takes option for console output', function (done) {
+      globSync.returns(defaultGlobResult)
       statSync.returns(fileStats)
       readFileSync.returns(file1)
 
@@ -150,6 +158,7 @@ describe('dotenv-init', function () {
     })
 
     it('takes option for file output', function (done) {
+      globSync.returns(defaultGlobResult)
       statSync.returns(fileStats)
       readFileSync.returns(file1)
 
@@ -175,6 +184,7 @@ describe('dotenv-init', function () {
     })
 
     it('takes option for safe', function (done) {
+      globSync.returns(defaultGlobResult)
       statSync.returns(fileStats)
       readFileSync.returns('empty file')
 
@@ -187,6 +197,7 @@ describe('dotenv-init', function () {
     })
 
     it('takes option for allowing comments', function (done) {
+      globSync.returns(defaultGlobResult)
       statSync.returns(fileStats)
       readFileSync.withArgs(sinon.match('file1.js'), sinon.match.string).returns(file1)
       readFileSync.withArgs(sinon.match('file2.js'), sinon.match.string).returns(file2)
@@ -204,7 +215,36 @@ describe('dotenv-init', function () {
       done()
     })
 
+    it('takes option for ignore', function (done) {
+      globSync.returns(defaultGlobResult)
+      statSync.returns(fileStats)
+      readFileSync.returns('empty file')
+
+      defaultArgs.ignore = 'otherDir/**'
+
+      init(defaultArgs)
+      consoleLog.restore()
+      globSync.args[0][1].should.eql({ ignore: defaultArgs.ignore.split(',') })
+
+      done()
+    })
+
+    it('takes option for ignore (empty string)', function (done) {
+      globSync.returns(defaultGlobResult)
+      statSync.returns(fileStats)
+      readFileSync.returns('empty file')
+
+      defaultArgs.ignore = ''
+
+      init(defaultArgs)
+      consoleLog.restore()
+      globSync.args[0][1].should.eql({ ignore: null })
+
+      done()
+    })
+
     it('takes option for filename', function (done) {
+      globSync.returns(defaultGlobResult)
       statSync.returns(fileStats)
       readFileSync.returns('empty file')
 
@@ -218,6 +258,7 @@ describe('dotenv-init', function () {
     })
 
     it('takes option for safeFilename', function (done) {
+      globSync.returns(defaultGlobResult)
       statSync.returns(fileStats)
       readFileSync.returns('empty file')
 
@@ -231,18 +272,20 @@ describe('dotenv-init', function () {
     })
 
     it('takes a list of files to scan as args', function (done) {
+      globSync.returns(defaultGlobResult)
       statSync.returns(fileStats)
       readFileSync.withArgs(sinon.match('file1.js'), sinon.match.string).returns(file1)
       readFileSync.withArgs(sinon.match('file2.js'), sinon.match.string).returns(file2)
 
       init(defaultArgs)
-      statSync.args[0][0].should.containEql(defaultArgs.args[0])
-      statSync.args[1][0].should.containEql(defaultArgs.args[1])
+      statSync.args[0][0].should.containEql(defaultGlobResult[0])
+      statSync.args[1][0].should.containEql(defaultGlobResult[1])
 
       done()
     })
 
     it('should not allow options for filename and safeFilename be the same', function (done) {
+      globSync.returns(defaultGlobResult)
       defaultArgs.safe = true
       defaultArgs.output = 'silent'
       defaultArgs.filename = '.test'
@@ -260,6 +303,7 @@ describe('dotenv-init', function () {
     })
 
     it('should disregard safeFilename option if safe option is false', function (done) {
+      globSync.returns(defaultGlobResult)
       statSync.returns(fileStats)
       readFileSync.returns('empty file')
 
@@ -272,28 +316,45 @@ describe('dotenv-init', function () {
     })
 
     it('should exclude file list items that are directories', function (done) {
+      globSync.returns(defaultGlobResult)
       statSync.onFirstCall().returns(fileStats)
               .onSecondCall().returns(dirStats)
       readFileSync.returns(file1)
 
       init(defaultArgs)
-      statSync.args[0][0].should.containEql(defaultArgs.args[0])
-      statSync.args[1][0].should.containEql(defaultArgs.args[1])
+      statSync.args[0][0].should.containEql(defaultGlobResult[0])
+      statSync.args[1][0].should.containEql(defaultGlobResult[1])
       readFileSync.callCount.should.equal(1)
 
       done()
     })
 
     it('should exclude file list items that do not exist', function (done) {
+      globSync.returns(defaultGlobResult)
       statSync.onFirstCall().throws()
               .onSecondCall().returns(fileStats)
       readFileSync.returns(file1)
 
       init(defaultArgs).should.not.throw()
       statSync.should.be.calledTwice()
-      statSync.args[0][0].should.containEql(defaultArgs.args[0])
-      statSync.args[1][0].should.containEql(defaultArgs.args[1])
+      statSync.args[0][0].should.containEql(defaultGlobResult[0])
+      statSync.args[1][0].should.containEql(defaultGlobResult[1])
       readFileSync.callCount.should.equal(1)
+
+      done()
+    })
+
+    it('should exclude file list items that fail when removing comments', function (done) {
+      globSync.returns(defaultGlobResult)
+      statSync.returns(fileStats)
+      readFileSync.onFirstCall().returns(file1)
+                  .onSecondCall().returns('#!/usr/bin/env node')
+
+      init(defaultArgs).should.not.throw()
+      statSync.should.be.calledTwice()
+      statSync.args[0][0].should.containEql(defaultGlobResult[0])
+      statSync.args[1][0].should.containEql(defaultGlobResult[1])
+      readFileSync.callCount.should.equal(2)
 
       done()
     })
@@ -316,13 +377,14 @@ describe('dotenv-init', function () {
     })
 
     it('should scan all files for process environment variables', function (done) {
+      globSync.returns(defaultGlobResult)
       statSync.returns(fileStats)
       readFileSync.withArgs(sinon.match('file1.js'), sinon.match.string).returns(file1)
       readFileSync.withArgs(sinon.match('file2.js'), sinon.match.string).returns(file2)
 
       var envvars = init(defaultArgs)
-      statSync.args[0][0].should.containEql(defaultArgs.args[0])
-      statSync.args[1][0].should.containEql(defaultArgs.args[1])
+      statSync.args[0][0].should.containEql(defaultGlobResult[0])
+      statSync.args[1][0].should.containEql(defaultGlobResult[1])
 
       var orderedNames = orderedEnvvars.map((envvar) => { return { name: envvar } })
       envvars.should.containDeepOrdered(orderedNames)

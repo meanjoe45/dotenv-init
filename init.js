@@ -7,6 +7,7 @@ var path = require('path')
 
 // Dependency Modules
 var decomment = require('decomment')
+var globs = require('globs')
 
 // Local Modules
 var pkg = require(path.resolve('package.json'))
@@ -68,12 +69,12 @@ function verifyFiles (inputFiles) {
       var stats = fs.statSync(absFile)
 
       if (stats.isFile()) {
-        files.push({ path: absFile, original: file, include: true })
+        files.push({ path: absFile, original: file, include: true, error: null })
       } else {
-        files.push({ path: absFile, original: file, include: false })
+        files.push({ path: absFile, original: file, include: false, error: null })
       }
     } catch (error) {
-      files.push({ path: absFile, original: file, include: false })
+      files.push({ path: absFile, original: file, include: false, error: error.message })
     }
   }
 
@@ -87,6 +88,9 @@ function writeFileList (files) {
     var include = (file.include) ? '+' : '-'
 
     fileList += `\n# ${include} ${file.original}`
+    if (file.error) {
+      fileList += ` -- ${file.error}`
+    }
   }
 
   fileList += '\n'
@@ -122,7 +126,12 @@ function scanFiles (files, comments) {
     if (file.include) {
       var data = fs.readFileSync(file.path, 'utf-8')
       if (!comments) {
-        data = decomment(data)
+        try {
+          data = decomment(data)
+        } catch (error) {
+          file.include = false
+          file.error = `decomment: ${error.message}`
+        }
       }
 
       var match = envRegexp.exec(data)
@@ -197,6 +206,8 @@ function init (program) {
     return
   }
 
+  var ignore = (program.ignore) ? program.ignore.split(',') : null
+
     // print header information
   var envConsole = ''
   var envFile = ''
@@ -205,8 +216,11 @@ function init (program) {
   envConsole += (consoleOutput >= OUTPUT_NORMAL) ? header : ''
   envFile += (fileOutput >= OUTPUT_NORMAL) ? header : ''
 
+    // extract files from globs
+  var files = globs.sync(program.args, { ignore: ignore })
+
     // determine file list
-  var files = verifyFiles(program.args)
+  files = verifyFiles(files)
 
   if (!files.some(file => file.include)) {
     envConsole += '\nNO FILES TO PROCESS, exiting ...'
@@ -216,13 +230,13 @@ function init (program) {
     return
   }
 
+    // scan files for environment variables
+  var envvars = scanFiles(files, program.comments)
+
   var fileList = writeFileList(files)
 
   envConsole += (consoleOutput >= OUTPUT_VERBOSE) ? fileList : ''
   envFile += (fileOutput >= OUTPUT_VERBOSE) ? fileList : ''
-
-    // scan files for environment variables
-  var envvars = scanFiles(files, program.comments)
 
   var envSafeFile = envFile
   var envvarList = writeEnvvars(envvars)
