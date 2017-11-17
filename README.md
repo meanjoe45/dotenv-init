@@ -27,10 +27,12 @@ After parsing all the files, the list of environment variables are sorted into a
 
 ## Examples
 
-When installed globally, running the following command from the root directory of the target project works well for sending the list of `.js` files to dotenv-init.
+When installed globally, one of the following commands from the root directory of the target project works well for sending the list of `.js` files to dotenv-init.
 
 ```
-dotenv-init $(find . -type f -not -path "*/node_modules*" -not -path "*/test*" -name "*.js")
+dotenv-init '**/*.js'
+dotenv-init 'client/**/*.js' 'server/**/*.js'
+dotenv-init --ignore 'node_modules/**' 'client/**/*.js' 'server/**/*.js'
 ```
 
 ### Assigned with `=`
@@ -67,18 +69,20 @@ const dbSettings = {
 ## Options
 
 ```
-  Usage: dotenv-init [options] <file ...>
+Usage: dotenv-init [options] <file ...>
+
 
   Options:
 
-    -h, --help                 output usage information
     -V, --version              output the version number
     -s, --safe                 .env.example is also output for use with dotenv-safe
     -c, --comments             include comments when parsing for environment variables
+    -i, --ignore <patterns>    files to ignore as part of file patterns; overrides default ('node_modules/**,test/**')
     -o, --output [level]       set the console output level [normal] (silent|normal|verbose)
     -O, --file-output [level]  set the file output level [normal] (minimal|normal|verbose)
     --filename [name]          chose the name of the output file [.env]
     --safe-filename [name]     chose the name of the safe output file [.env.example]
+    -h, --help                 output usage information
 ```
 
 ### `-h, --help`
@@ -91,36 +95,51 @@ This option outputs the current version of dotenv-init.
 
 ### `-s, --safe`
 
+Default: `false`
+
 This option will output the `.env.example` file.
 
 ### `-c, --comments`
 
+Default: `false`
+
 This option will include environment variables in comments when parsing
+
+### `-i, --ignore`
+
+Default: `'node_modules/**', 'test/**'`
+
+This option is a comma separated list of patterns to ignore when collecting files to read. The default value excludes files in `node_modules` and `test` directories.
 
 ### `-o, --output [level]`
 
-This option adjust the level of output sent to the console (silent, normal or verbose).
+Default: `normal`
+
+This option adjust the level of output sent to the console. Acceptable values are `silent`, `normal`, or `verbose`.
 
 ### `-O, --file-output [level]`
 
-This option adjust the level of output sent to the files that are written (minimal, normal or verbose).
+Default: `normal`
+
+This option adjust the level of output sent to the files that are written. Acceptable values are `minimal`, `normal`, or `verbose`.
 
 ### `--filename [name]`
 
-This option allows the output file to be given a different name from the default `.env`.
+Default: `.env`
+
+This option allows the output file to be given a different name from the default.
 
 ### `--safe-filename [name]`
 
-This option allows the safe output file to be given a different name from the default `.env.example`.
+Default: `.env.example`
+
+This option allows the safe output file to be given a different name from the default.
 
 ## Contributing
 
 This project is very new and does not cover all the corner cases that it should. If there is a feature you would like added or a corner case not properly covered, please open an issue on [Github][repo-issues].
 
 ## Roadmap
-
-### v1.1.0
-- Add the use of `globs` to specify files to search
 
 ### Future
 - make current functionality a separate command (probably "parse")
