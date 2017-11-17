@@ -62,6 +62,10 @@ function verifyFiles (inputFiles) {
   const cwd = process.cwd()
   const files = []
 
+  if (!inputFiles) {
+    return files
+  }
+
   for (let file of inputFiles) {
     const absFile = path.resolve(cwd, file)
 
